@@ -6,11 +6,11 @@
         <div class="list" v-else>
             <div class="toobar">
                 <ul>
-                    <li  @click="tabchange('all')"><a href="#" :class="{active: tab==='all'}">全部</a></li>
-                    <li  @click="tabchange('good')"><a href="#" :class="{active: tab==='good'}">精华</a></li>
-                    <li  @click="tabchange('share')"><a href="#" :class="{active: tab==='share'}">分享</a></li>
-                    <li  @click="tabchange('ask')"><a href="#" :class="{active: tab==='ask'}">问答</a></li>
-                    <li  @click="tabchange('job')"><a href="#" :class="{active: tab==='job'}">招聘</a></li>
+                    <li  @click="tabchange('all')" :class="{active: tab==='all'}">全部</li>
+                    <li  @click="tabchange('good')" :class="{active: tab==='good'}">精华</li>
+                    <li  @click="tabchange('share')" :class="{active: tab==='share'}">分享</li>
+                    <li  @click="tabchange('ask')" :class="{active: tab==='ask'}">问答</li>
+                    <li  @click="tabchange('job')" :class="{active: tab==='job'}">招聘</li>
                 </ul>
             </div>
             <div class="content">
@@ -29,7 +29,7 @@
                     </li>
                 </ul>
             </div>
-            <pagination @handle="renderList" :maxpage="maxpage" :init="init"></pagination>
+            <pagination @handle="handle" :maxpage="maxpage"  :currentpage="currentpage"></pagination>
         </div>
     </div>
 </template>
@@ -47,8 +47,7 @@
                 typecom: 'typecom',
                 currentpage: 1,
                 tab: 'all',
-                maxpage: 100,
-                init: true
+                maxpage: 0
             }
         },
         computed:{
@@ -86,50 +85,69 @@
                 })
                 .then(res=>{
                     if(res.data.success === true){
+                        console.log(res)
                         this.lists = res.data.data
-                        this.loading= false
+                        switch(this.tab){   //没有返回数据总量的相关信息，自定义
+                            case "all": 
+                                this.maxpage=100
+                            break;
+
+                            case "good":
+                                this.maxpage=20
+                            break;
+
+                            case "share": 
+                                this.maxpage=40 
+                            break;
+
+                            case "ask": 
+                                this.maxpage=50   
+                            break;
+
+                            case "job": 
+                                this.maxpage=15  
+                            break;
+                        }
                     } 
+                    this.loading= false
                 })
                 .catch(err=>{
+                    this.loading= false
                     console.log(err)
                 })
             },
-            renderList(val){
+            handle(val){
                 this.currentpage=val
-                this.getData()
+                this.$router.push({path: '/',query:{tab: this.tab,page: this.currentpage}})
             },
             tabchange(val){
-                if(val==='all'){
-                   this.tab = 'all'
-                   this.init = !this.init
-                   this.maxpage=100
-                   this.getData()
-                }else if(val==='good'){
-                    this.tab = 'good'
-                    this.init = !this.init
-                    this.maxpage=20
-                    this.getData()
-                }else if(val==='share'){
-                    this.tab = 'share'
-                    this.init = !this.init
-                    this.maxpage=40
-                    this.getData()
-                }else if(val==='ask'){
-                    this.tab = 'ask'
-                    this.init = !this.init
-                    this.maxpage=50
-                    this.getData()
-                }else if(val==='job'){
-                    this.tab = 'job'
-                    this.init = !this.init
-                    this.maxpage=15
-                    this.getData()
-                }
+                this.tab = val
+                this.currentpage=1
+                this.$router.push({path: '/',query:{tab: this.tab,page: this.currentpage}})
             }
         },
         beforeMount(){
+            if(this.$route.query.tab){
+                this.tab = this.$route.query.tab
+                this.currentpage = parseInt(this.$route.query.page)
+            }else{
+                this.tab = 'all'
+                this.currentpage = 1
+            }
             this.loading= true
             this.getData()
+        },
+        watch: {
+            '$route'(){
+                if(this.$route.query.tab){
+                    this.tab = this.$route.query.tab
+                    this.currentpage = parseInt(this.$route.query.page)
+                }else{
+                    this.tab = 'all'
+                    this.currentpage = 1
+                }
+                this.getData()
+            }
         }
     }
 
@@ -149,17 +167,14 @@ ul {
 .toobar li{
     display: inline-block;
     margin: 0 10px;
-}
-.toobar li a{
     border-radius: 3px;
-    display: inline-block;
     padding: 2px 3px;
-    text-decoration: none;
     color: #80bd01; 
     font-size: 14px;
     line-height: 20px;
+    cursor: pointer;
 }
-.toobar li a.active{
+.toobar li.active{
     background-color: #80bd01; 
     color: #fff;
 }

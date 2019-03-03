@@ -51,11 +51,12 @@
                 this.axios.get(`https://cnodejs.org/api/v1/topic/${this.$route.params.id}`)
                 .then(res=>{
                     if(res.data.success === true){
-                        this.text = res.data.data
-                        this.loading= false
+                        this.text = res.data.data   
                     } 
+                    this.loading= false
                 })
                 .catch(err=>{
+                    this.loading= false
                     console.log(err)
                 })
             }
@@ -73,6 +74,7 @@
     }
 </script>
 <style>
+@import '../assets/markdown.css';
 .art {
     margin-right: 330px;
 }

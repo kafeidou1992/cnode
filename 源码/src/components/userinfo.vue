@@ -29,7 +29,7 @@
                 <ul v-else>
                     <li v-for="list in userinfo.recent_topics" class="clearfix">
                         <img :src="list.author.avatar_url">
-                        <router-link :to="{name:'topic',params:{id:list.id}}"><span class="title">{{list.title}}</span></router-link>
+                        <router-link :to="{name:'topic',params:{id:list.id,name:list.author.loginname}}"><span class="title">{{list.title}}</span></router-link>
                         <span class="replytime">
                             <img :src="list.author.avatar_url" alt="">
                             <span class="time">{{list.last_reply_at |fixtime}}</span>
@@ -47,7 +47,7 @@
                         <router-link :to="{name:'userinfo',params:{name:list.author.loginname}}">
                             <img :src="list.author.avatar_url">
                         </router-link>
-                        <router-link :to="{name:'topic',params:{id:list.id}}"><span class="title">{{list.title}}</span></router-link>
+                        <router-link :to="{name:'topic',params:{id:list.id,name:list.author.loginname}}"><span class="title">{{list.title}}</span></router-link>
                         <span class="replytime">
                             <img :src="list.author.avatar_url" alt="">
                             <span class="time">{{list.last_reply_at |fixtime}}</span>
@@ -77,10 +77,11 @@
                         if(this.userinfo.githubUsername){
                             this.githuburl='https://github.com/'+this.userinfo.githubUsername
                         }
-                        this.loading= false
                     } 
+                    this.loading= false
                 })
                 .catch(err=>{
+                    this.loading= false
                     console.log(err)
                 })
             }

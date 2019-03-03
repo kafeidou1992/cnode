@@ -67,11 +67,12 @@
                 this.axios.get(`https://cnodejs.org/api/v1/user/${this.$route.params.name}`)
                 .then(res=>{
                     if(res.data.success === true){
-                        this.userinfo = res.data.data
-                        this.loading= false
+                        this.userinfo = res.data.data   
                     } 
+                    this.loading= false
                 })
                 .catch(err=>{
+                    this.loading= false
                     console.log(err)
                 })
             }
@@ -79,6 +80,12 @@
         beforeMount(){
             this.loading= true
             this.getData()
+        },
+        watch: {
+            '$route.params.name'(to, from) {
+                this.loading= true
+                this.getData()
+            }
         }
     }
 </script>
@@ -130,7 +137,7 @@
 }
 .createtopic li,
 .replytopic li{
-    padding: 0 10px;
+    padding: 3px 10px;
     background-color: white;
     list-style: none;
     font-size: 14px;
@@ -148,6 +155,7 @@
     font-size: 14px;
     line-height: 30px;
     color: #778087;
+    vertical-align: top;
 }
 .createtopic li:hover,
 .replytopic li:hover{

@@ -1,0 +1,42 @@
+.art .topic .content h1 {
+  margin: 0 0 1em;
+}
+.art .topic .content h2 {
+  margin: 45px 0 0.8em;
+  padding-bottom: 0.7em;
+  border-bottom: 1px solid #ddd;
+}
+.art .topic .content h3 {
+  margin: 52px 0 1.2em;
+}
+.art .topic .content figure,
+.art .topic .content p,
+.art .topic .content ul,
+.art .topic .content ol {
+  margin: 1.2em 0;
+}
+.art .topic .content p,
+.art .topic .content ul,
+.art .topic .content ol {
+  line-height: 1.6em;
+}
+.art .topic .content ul,
+.art .topic .content ol {
+  padding-left: 1.5em;
+}
+.art .topic .content a {
+  color: #42b983;
+  font-weight: 600;
+}
+.art .topic .content blockquote {
+  margin: 2em 0;
+  padding-left: 20px;
+  border-left: 4px solid #42b983;
+}
+.art .topic .content blockquote p {
+  font-weight: 600;
+  margin-left: 0;
+}
+.art .topic .content iframe {
+  margin: 1em 0;
+}

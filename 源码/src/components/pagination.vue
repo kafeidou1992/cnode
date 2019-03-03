@@ -4,7 +4,7 @@
         <li><button :class="{active: currentpage!==1}" @click="changepage">上一页</button></li>
         <li><button v-if="pagelist[0]>1">...</button></li>
         <li v-for="page in pagelist" @click="changepage(page)">
-            <a href="#" :class="{current: page===currentpage}">{{page}}</a>
+            <button class="active" :class="{current: page===currentpage}">{{page}}</button>
         </li>
         <li><button v-if="pagelist[4]<maxpage">...</button></li>
         <li><button :class="{active: currentpage!==maxpage}" @click="changepage">下一页</button></li>
@@ -14,19 +14,27 @@
 <script>
     export default {
         name: 'pagination',
-        props: ['maxpage','init'],
-        data(){
-            return {
-                pagelist: [1,2,3,4,5],
-                currentpage: 1
-            }
-        },
-        watch:{
-            init(){
-                this.pagelist=[1,2,3,4,5]
-                setTimeout(function(){
-                    Array.from(document.querySelectorAll('.pagination a'))[0].click()
-                },0)  
+        props: ['maxpage','currentpage'],
+        computed: {
+            pagelist(){
+                if (this.maxpage===0) return []
+                if(this.maxpage>0&&this.maxpage<5){
+                    const arr = []
+                    for(let i=0;i<this.maxpage;i++){
+                        arr.push(i+1)
+                    }
+                    return arr
+                }
+                if(this.maxpage>=5){
+                    if(this.currentpage-2>=1&&this.currentpage+2<=this.maxpage){
+                        return [this.currentpage-2,this.currentpage-1,this.currentpage,this.currentpage+1,this.currentpage+2]
+                    }else if(this.currentpage-2<1){
+                        return [1,2,3,4,5]    
+                    }else if(this.currentpage+2>this.maxpage){
+                        return [this.maxpage-4,this.maxpage-3,this.maxpage-2,this.maxpage-1,this.maxpage]
+                    }
+                }
+                
             }
         },
         methods:{
@@ -35,31 +43,25 @@
                     switch(val.target.innerText){
                         case "首页": 
                             if(this.currentpage !== 1){
-                                this.pagelist=[1,2,3,4,5]
-                                setTimeout(function(){
-                                    Array.from(document.querySelectorAll('.pagination a'))[0].click()
-                                },0)  
+                                this.changepage(1)
                             }
                         break;
 
                         case "上一页":
-                            if(this.currentpage !== 1){ 
-                                [...document.querySelectorAll('.pagination a')][this.pagelist.indexOf(this.currentpage)-1].click()
+                            if(this.currentpage > 1){ 
+                               this.changepage(this.currentpage-1)
                             }
                         break;
 
                         case "下一页": 
-                            if(this.currentpage !== this.maxpage){ 
-                                [...document.querySelectorAll('.pagination a')][this.pagelist.indexOf(this.currentpage)+1].click()
+                            if(this.currentpage < this.maxpage){ 
+                                this.changepage(this.currentpage+1)
                             }
                         break;
 
                         case "尾页": 
                             if(this.currentpage !== this.maxpage){
-                                this.pagelist=[this.maxpage-4,this.maxpage-3,this.maxpage-2,this.maxpage-1,this.maxpage]
-                                setTimeout(function(){
-                                    Array.from(document.querySelectorAll('.pagination a'))[4].click()
-                                },0)  
+                                this.changepage(this.maxpage)
                             }
                         break;
 
@@ -67,15 +69,7 @@
                         break;
                     }
                 }else{
-                    this.currentpage = val
-                    this.$emit('handle',this.currentpage)
-                    if(val>=this.pagelist[3]&&this.pagelist[4]<this.maxpage){
-                        this.pagelist.shift()
-                        this.pagelist.push(this.pagelist[3]+1)
-                    }else if(val<=this.pagelist[1]&&this.pagelist[0]>1){
-                        this.pagelist.unshift(this.pagelist[0]-1)
-                        this.pagelist.pop()
-                    }
+                    this.$emit('handle',val)
                 }
             }
         }
@@ -93,7 +87,6 @@
     ul li {
         display: inline-block;
     }
-    ul li a,
     ul li button{
         font-size: 14px;
         display: inline-block;
@@ -102,7 +95,6 @@
         color: #999;
         padding: 4px 12px;
         line-height: 20px;
-        text-decoration: none;   
     }
     ul li button{
         outline: none;
@@ -117,7 +109,7 @@
         border-right: 1px solid #ddd;
         border-radius: 0 4px 4px 0;
     }
-    ul li a.current{
+    ul li button.current{
         color: #80bd01;
     }
 </style>
